@@ -3,6 +3,7 @@
 #include<list>
 #include<vector>
 #include<queue>
+#include<stack>
 
 struct Node {
 	int id;
@@ -10,12 +11,31 @@ struct Node {
 	std::list<int> neighbours;
 };
 
-void dfs(int id, bool* visited, const std::vector<Node*>& graph) {
+void dfsRec(int id, bool* visited, const std::vector<Node*>& graph) {
 	visited[id] = true;
 	std::cout << graph[id]->value << std::endl;
 	for (auto it = graph[id]->neighbours.cbegin(); it != graph[id]->neighbours.cend(); it++)
 	{
-		if (!visited[*it]) dfs(*it, visited, graph);
+		if (!visited[*it]) dfsRec(*it, visited, graph);
+	}
+}
+
+void dfsStack(int id, bool* visited, const std::vector<Node*>& graph) {
+	std::stack<int> stack;
+	int current = id;
+	stack.push(current);
+	while (!stack.empty()) {
+		current = stack.top();
+		stack.pop();
+		visited[current] = true;
+		std::cout << graph[current]->value << std::endl;
+		for (auto it = graph[current]->neighbours.cbegin(); it != graph[current]->neighbours.cend(); it++)
+		{
+			if (!visited[*it]) {
+				visited[*it] = true;
+				stack.push(*it);
+			}
+		}
 	}
 }
 
@@ -59,6 +79,6 @@ int main() {
 		}
 		graph.push_back(vertex);
 	}
-	bfs(0, visited, graph);
+	dfsStack(0, visited, graph);
 	return 0;
 }
